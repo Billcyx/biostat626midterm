@@ -122,11 +122,11 @@ valid_multiclass$subject.activity= NULL
 
 train_x = train_multiclass[,1:561]
 train_x = scale(train_x)[,]
-train_y = train_multiclass[,562]
+train_y = train_multiclass[,562] - 1
 
 valid_x = valid_multiclass[,1:561]
 valid_x = scale(valid[,-14])[,]
-valid_y = valid_multiclass[,562]
+valid_y = valid_multiclass[,562] - 1
 
 # load the train and valid data into the LightGBM dataset object. 
 #library('lightgbm')
@@ -137,7 +137,7 @@ dvalid <- lgb.Dataset.create.valid(dtrain, data = as.matrix(valid_x), label = va
 params <- list(objective = "multiclass",
                metric = "multi_error",
                seed = 42,
-               num_class = 8)
+               num_class = 7)
 
 # train model 
 lgb_model <- lgb.train(params, dtrain, 200, list(test= dvalid), early_stopping_round=10)
@@ -151,7 +151,8 @@ categorical_prediction2 = c()
 list = c()
 
 for (i in 1: length(my_preds2))
-  if (i %% 8 == 0){
+  if (i %% 7 == 0){
+    list = c(list, my_preds2[i])
     max = which.max(list)
     categorical_prediction2 = c(categorical_prediction2, max)
     list = c()
@@ -169,3 +170,4 @@ fwrite(list(categorical_prediction), file = "binary_yuxi520.txt")
 
 library(data.table) # install if not installed already
 fwrite(list(categorical_prediction2), file = "multiclass_yuxi520.txt")
+
